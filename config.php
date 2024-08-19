@@ -15,10 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 // Your existing PHP code here
 
-$servername = "sql110.infinityfree.com";
-$username = "if0_37131052";
-$password = "uRdu46egYfeZ";
-$database = "if0_37131052_gpapro";
+$servername = "sql12.freesqldatabase.com";
+$username = "sql12726414";
+$password = "CAkPUsZeqS";
+$database = "sql12726414";
+
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
