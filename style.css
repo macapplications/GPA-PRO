@@ -1,0 +1,685 @@
+/* Google Fonts - Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+:root {
+  --clr-primary: #10a37f;
+  --clr-neutral-200: #c2c8d0;
+  --clr-neutral-300: #999;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Roboto;
+}
+
+body {
+  min-height: 100%;
+  background: (75, 75, 75, 0.37); /* Changed background color */
+
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+nav .logo {
+  display: flex;
+  align-items: center;
+  margin: 0 24px;
+}
+
+.logo .menu-icon {
+  color: var(--clr-primary); /* Changed menu icon color */
+  font-size: 24px;
+  margin-right: 14px;
+  cursor: pointer;
+}
+
+.logo .logo-name {
+  color: var(--clr-primary); /* Changed logo name color */
+  font-size: 22px;
+  font-weight: 500;
+}
+
+nav .sidebar {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  height: 100%;
+  width: 260px;
+  padding: 20px 0;
+  background-color: #fff;
+  box-shadow: 0 5px 1px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+
+nav.open .sidebar {
+  left: 0;
+}
+
+.sidebar .sidebar-content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px 16px;
+}
+
+.sidebar-content .list {
+  list-style: none;
+}
+
+.list .nav-link {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  padding: 14px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+
+.lists .nav-link:hover ,.active-link{
+  background-color: var(--clr-primary); /* Changed hover background color */
+
+}
+
+.nav-link .icon {
+  margin-right: 14px;
+  font-size: 20px;
+  color: var(--clr-neutral-300); /* Changed icon color */
+}
+
+.nav-link .link {
+  font-size: 16px;
+  color: var(--clr-neutral-300); /* Changed link color */
+  font-weight: 400;
+}
+
+.lists .nav-link:hover .icon,
+.lists .nav-link:hover .link, .active-link .icon, .active-link .link{
+  color: #fff;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  height: 1000vh;
+  width: 200%;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+nav.open ~ .overlay {
+  opacity: 1;
+  left: 260px;
+  pointer-events: auto;
+}
+
+/* Media Query for bigger screens */
+@media only screen and (min-width: 769px) {
+  .logo .menu-icon {
+    display: none; /* Hide the menu icon for bigger screens */
+  }
+  nav .sidebar {
+    left: 0; /* Always open on bigger screens */
+  }
+}
+
+/* Content area */
+.content {
+  margin-left: 260px; /* Adjusted margin to account for the sidebar width */
+  padding: 20px;
+  padding-top: 100px;
+}
+
+@media only screen and (max-width: 768px) {
+  .content {
+    margin-left: 0; /* Reset margin for smaller screens */
+  }
+}
+
+
+.courseRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 10px;
+    margin-top: 10px;
+}
+/* Style the placeholder text color */
+.courseRow input::placeholder {
+    color: #000000; /* Placeholder text color */
+}
+
+.courseRow input,
+.courseRow select {
+    width: 100%; 
+    height: calc(2em + .75rem + 5px); 
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 0%;
+}
+
+.courseRow select{
+  background: #FFFFFF url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+    -webkit-appearance: none; 
+}
+
+
+.courseRow {
+    display: flex;
+    align-items: center; /* Vertically align elements */
+}
+
+.icon-wrapper {
+    margin-right: 0; /* Remove default margin */
+}
+
+.fas.fa-ellipsis-v {
+    font-size: 12px;
+}
+
+/* Media 
+
+/* Media Query for screens smaller than or equal to 600px */
+@media only screen and (max-width: 600px) {
+    .courseRow {
+        display: block;
+    }
+
+    /* Adjust course code input width for smaller devices */
+    .courseRow input[name="course_code[]"] {
+        width: calc(30% - 5px); /* Adjust for spacing */
+        margin-bottom: 10px;
+      
+    }
+    .courseRow input[name="course_name[]"]{
+        width: calc(69% - 5px); /* Adjust for spacing */
+        margin-bottom: 10px;
+        margin-left: 1%;
+    }
+    
+    
+    .courseRow select,.courseRow span,
+    .courseRow input[name="credit[]"] {
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+    .courseRow select,
+    .courseRow input[name="credit[]"] {
+        width: calc(47% - 5px);
+    }
+    .courseRow select {
+      margin-left: 1%;
+    }
+    .courseRow span{
+      padding-left: 8px;
+    }
+    
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Adjust margin as needed */
+}
+
+.buttons-container button {
+  margin: 0 10px;
+  background-color: var(--clr-primary);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.buttons-container .add-b{
+  background-color: #fff;
+  color: var(--clr-primary);
+  border: 1px solid var(--clr-primary);
+}
+
+
+.options-container {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    z-index: 1;
+    right: 100%; /* Position to the left side of the icon */
+}
+
+.icon-wrapper {
+    position: relative;
+}
+
+.show {
+    display: block;
+}
+
+.options-container button {
+    display: block;
+    margin-bottom: 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.options-container button:hover {
+    background-color: #f0f0f0;
+}
+
+
+
+/*=============== POPUP BOXES ===============*/
+
+.popup__button,
+.popup__button-link {
+  display: inline-block;
+  background-color: #292929;
+  color: #FFF;
+  padding: 1rem 1.25rem;
+  border-radius: .5rem;
+  width: 90%;
+  border: none;
+  cursor: pointer; /* Add cursor pointer for button feel */
+  transition: background-color 0.3s; /* Add transition for hover effect */
+}
+
+.popup__button:hover{
+  background-color: #1f1f1f; /* Change background color on hover */
+}
+
+.popup__box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(92, 92, 92, 0.37);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  align-items: flex-end;
+  overflow: hidden;
+  transition: all .3s;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.popup__content {
+  position: relative;
+  background-color: #FFF;
+  text-align: center;
+  padding: 3rem 2rem 2rem;
+  border-radius: 1rem 1rem 0 0;
+  transition: all .3s;
+  transform: translateY(10%);
+  max-height: 600px;
+  overflow-y : auto;
+}
+
+.popup__close {
+  display: inline-flex;
+  background-color: #292929;
+  border-radius: .25rem;
+  color: #FFF;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  cursor: pointer;
+}
+
+.popup__title {
+  font-size: 1.5rem;
+  color: #2d2d2d;
+  font-weight: 500;
+}
+
+.popup__description {
+  margin-bottom: 1.5rem;
+}
+
+
+
+/* Show popup box */
+.show-popup {
+  visibility: visible;
+  opacity: 1;
+}
+
+.show-popup .popup__content {
+  transform: translateY(0);
+}
+
+/*=============== BREAKPOINTS ===============*/
+/* For small devices */
+@media screen and (min-width: 576px) {
+  .popup__content {
+    margin: auto;
+    width: 380px;
+    border-radius: 1.25rem;
+  }
+}
+
+
+/* For small devices */
+@media screen and (max-width: 576px) {
+  .popup__content {
+    max-height: 60vh; /* Adjust the maximum height as needed */
+    overflow-y: auto; /* Add vertical scroll when content overflows */
+  }
+}
+
+
+
+
+/* Grade Change */
+.gradeRow {
+   
+    max-height: 200px;
+  
+    display: flex; /* Use flexbox to align items */
+    align-items: center; /* Align items vertically */
+    
+    overflow-y: auto;
+}
+
+.gradeRow input {
+    flex: 1; /* Distribute remaining space evenly among input fields */
+    height: calc(2em + .75rem + 5px);
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    width: calc(43% - 10px); /* Add margin between input fields */
+}
+
+/* Style for the delete button */
+.delete-grade {
+    font-size: 1.3rem;
+    cursor: pointer;
+    /* Adjust the margin to separate from input fields */
+}
+
+/* Style for buttons */
+.buttons-container .popup__button,
+.add-g {
+    background-color: #000000;
+    color: #ffffff;
+    border-radius: .2rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Style for the "Add Grade" button */
+.buttons-container .add-g {
+    background-color: transparent;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+
+
+
+
+/* Custom Button Styles */
+
+ .btn-container{
+   text-align: right;
+ }
+ 
+.change-grade-system-btn {
+  font-size: 10px;
+  display: inline-block;
+  padding: .25rem .75rem;
+  border-radius: 0.2rem;
+  border: 1px solid #000000;
+  cursor: pointer;
+  background-color: #000000;
+  color: #fff;
+
+}
+
+.change-grade-system-btn:hover {
+  background-color: transparent;
+  color: #000000;
+}
+
+
+
+.course-details input ,
+.course-details select{
+  width: 90%; 
+    height: calc(2em + .75rem + 5px); 
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 5%;
+    
+  
+}
+
+
+
+.profile-settings {
+  display: block;
+  justify-content: space-between;
+  margin-top: 20px;
+  
+}
+
+.profile-column {
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom : 20px;
+}
+
+.profile-column h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.profile-input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.profile-button:disabled {
+  background-color: #f0f0f0; /* Lighter color when disabled */
+  color: #999; /* Lighter text color when disabled */
+  cursor: not-allowed; /* Change cursor to indicate button is disabled */
+}
+
+.profile-button {
+  background-color: var(--clr-primary);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+
+
+
+        .toast-container {
+            position: fixed;
+            
+            top: 70px; /* Adjust the top position to position it above the heading */
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px); /* Adjust the width to match the container's width */
+            max-width: 300px; /* Set maximum width for the toast container */
+            z-index: 1000; /* Ensure the toast container appears on top */
+        }
+        
+        
+        
+        .toast {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            list-style: none;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast.success {
+            background-color: #0ABF30;
+            color: #fff;
+        }
+
+        .toast.error {
+            background-color: #E24D4C;
+            color: #fff;
+        }
+
+        .toast .close-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #ffff;
+        }
+
+        .toast .close-icon:hover {
+            color: #34495E;
+        }
+        
+        
+        
+
+
+//cgpa calculator Styles
+
+
+.cgpa-calculator {
+  margin-bottom: 20px;
+}
+
+.cgpa-calculator .row {
+  margin-bottom: 10px;
+}
+
+.cgpa-calculator label {
+  font-weight: bold;
+}
+
+.cgpa-calculator input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  height: calc(2em + .75rem + 5px); 
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.buttons-container button {
+  margin: 0 10px;
+  background-color: var(--clr-primary);
+  color: #fff;
+  border: 0;
+  border-radius: 2px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.buttons-container button.add-sgpa {
+  background-color: #fff;
+  color: var(--clr-primary);
+  border: 1px solid var(--clr-primary);
+}
+
+
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

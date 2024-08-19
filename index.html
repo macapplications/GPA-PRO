@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>SGPA CALCULATOR</title>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <link rel="stylesheet" href="style.css" />
+      <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   </head>
+   <body>
+      <style>
+         body{
+         display: none;
+         }
+         .popup__button-link {
+         display: block;
+         margin: 1rem auto 0;
+         background: transparent;
+         color: #292929;
+         font-weight: 500;
+         }
+      </style>
+      <nav>
+         <div class="logo">
+            <i class="bx bx-menu menu-icon"></i>
+            <span class="logo-name">GPA PRO</span>
+         </div>
+         <div class="sidebar">
+            <div class="logo">
+               <i class="bx bx-menu menu-icon"></i>
+               <span class="logo-name">GPA PRO</span>
+            </div>
+            <div class="sidebar-content">
+               <ul class="lists">
+                  <li class="list">
+                     <a href="dashboard.html" class="nav-link">
+                     <i class="bx bx-home-alt icon"></i>
+                     <span class="link">Dashboard</span>
+                     </a>
+                  </li>
+                  <li class="list">
+                     <a href="#" class="nav-link active-link">
+                     <i class="bx bx-calculator icon"></i>
+                     <span class="link">SGPA Calculator</span>
+                     </a>
+                  </li>
+                  <li class="list">
+                     <a href="cgpa_calculator.html" class="nav-link">
+                     <i class="bx bx-calculator icon"></i>
+                     <span class="link">CGPA Calculator</span>
+                     </a>
+                  </li>
+                  <li class="list">
+                     <a href="profile.html" class="nav-link">
+                     <i class="bx bx-user icon"></i>
+                     <span class="link">Profile</span>
+                     </a>
+                  </li>
+               </ul>
+               <div class="bottom-cotent">
+                  <li class="list">
+                     <a href="logout.php" class="nav-link">
+                     <i class="bx bx-log-out icon"></i>
+                     <span class="link">Logout</span>
+                     </a>
+                  </li>
+               </div>
+            </div>
+         </div>
+      </nav>
+      <section class="overlay"></section>
+      <div class="toast-container"></div>
+      <div class="content">
+         <h2>SGPA Calculator</h2>
+         <div class="btn-container">
+            <button class="change-grade-system-btn" onclick="openPopUpBox2()">Change Grading System</button>
+         </div>
+         <form id="sgpaForm">
+            <div id="courseInputs">
+               <div class="courseRow">
+                  <input type="text" name="course_code[]" placeholder="Course Code" required>
+                  <input type="text" name="course_name[]" placeholder="Course Name" required>
+                  <input type="number" name="credit[]" placeholder="Credit" required>
+                  <select id="sgpaGradeSelect" name="grade[]" required>
+                     <option value="">Select Grade</option>
+                     <option value="10">S</option>
+                     <option value="9">A</option>
+                     <option value="8">B</option>
+                     <option value="7">C</option>
+                     <option value="6">D</option>
+                     <option value="5">E</option>
+                     <option value="0">F</option>
+                  </select>
+                  <span class="icon-wrapper">
+                     <i class="fas fa-ellipsis-v" onclick="toggleOptions(this)"></i>
+                     <div class="options-container">
+                        <button onclick="duplicateAndHide(this)">Duplicate</button>
+                        <button onclick="deleteCourse(this)">Delete</button>
+                     </div>
+                  </span>
+               </div>
+            </div>
+            <div class="buttons-container">
+               <button class="add-b" type="button" onclick="addCourse()">Add Course</button>
+               <button type="button" onclick="calculateSGPA()" id="open-sgpa">Calculate SGPA</button>
+            </div>
+         </form>
+         <div class="popup__box" id="popup-box">
+            <div class="popup__content">
+               <div class="popup__close close-popup" title="Close">
+                  <i class='bx bx-x'></i>
+               </div>
+               <h1 class="popup__title">SGPA : 10</h1>
+               <p class="popup__description">Percent Average : 95 %</p>
+               <button class="popup__button">Add to profile</button>
+               <button class="popup__button-link close-popup">Close</button>
+            </div>
+         </div>
+         <div class="popup__box" id="popup-box2">
+            <div class="popup__content">
+               <div class="popup__close close-popup" title="Close">
+                  <i class='bx bx-x'></i>
+               </div>
+               <h1 class="popup__title">Change Grade System</h1>
+               <p class="popup__description">Pop Up Box 2 Description</p>
+               <div class="gradeRow">
+                  <input type="text" name="grade[]" placeholder="Grade" value="S" required>
+                  <input type="text" name="point[]" placeholder="Grade Point" value="10" required>
+                  <i class='bx bx-trash delete-grade' title="Delete"></i>
+               </div>
+               <div class="gradeRow">
+                  <input type="text" name="grade[]" placeholder="Grade" value="A" required>
+                  <input type="text" name="point[]" placeholder="Grade Point" value="9" required>
+                  <i class='bx bx-trash delete-grade' title="Delete"></i>
+               </div>
+               <div class="gradeRow">
+                  <input type="text" name="grade[]" placeholder="Grade" value="B" required>
+                  <input type="text" name="point[]" placeholder="Grade Point" value="8" required>
+                  <i class='bx bx-trash delete-grade' title="Delete"></i>
+               </div>
+               <div class="gradeRow">
+                  <input type="text" name="grade[]" placeholder="Grade" value="C" required>
+                  <input type="text" name="point[]" placeholder="Grade Point" value="7" required>
+                  <i class='bx bx-trash delete-grade' title="Delete"></i>
+               </div>
+               <div class="gradeRow">
+                  <input type="text" name="grade[]" placeholder="Grade" value="D" required>
+                  <input type="text" name="point[]" placeholder="Grade Point" value="6" required>
+                  <i class='bx bx-trash delete-grade' title="Delete"></i>
+               </div>
+               <div class="gradeRow">
+                  <input type="text" name="grade[]" placeholder="Grade" value="E" required>
+                  <input type="text" name="point[]" placeholder="Grade Point" value="5" required>
+                  <i class='bx bx-trash delete-grade' title="Delete"></i>
+               </div>
+               <div class="gradeRow">
+                  <input type="text" name="grade[]" placeholder="Grade" value="F" required>
+                  <input type="text" name="point[]" placeholder="Grade Point" value="0" required>
+                  <i class='bx bx-trash delete-grade' title="Delete"></i>
+               </div>
+               <div class="buttons-container">
+                  <button class="popup__button add-g">Add Grade</button>
+                  <button class="popup__button saveBtn">Save</button>
+               </div>
+               <button class="popup__button-link close-popup">Close</button>
+            </div>
+         </div>
+         <div class="popup__box" id="popup-box3">
+            <div class="popup__content">
+               <div class="popup__close close-popup" title="Close">
+                  <i class='bx bx-x'></i>
+               </div>
+               <p class="popup__description">Enter your course and institution details</p>
+               <div class="course-details">
+                  <select id="institution" required>
+                     <option value="" selected>Select Institution</option>
+                     <option value="Others">Others</option>
+                  </select>
+                  <input type="text" id="institutionInput" name="institution[]" placeholder="Your Institution Name" style="display: none;" required>
+                  <select id="program" required>
+                     <option value="" selected>Select Program</option>
+                     <option value="Others">Others</option>
+                  </select>
+                  <input type="text" id="programInput" name="program[]" placeholder="Your Program Name" style="display: none;" required>
+                  <input type="text" name="semester[]" placeholder="Semester" required>
+               </div>
+               <button class="popup__button">Add to profile</button>
+               <button class="popup__button-link close-popup">Close</button>
+            </div>
+         </div>
+         <script>
+            $(document).ready(function(){
+            
+                    $.ajax({
+                        type: "GET",
+                        url: "check_login.php",
+                        success: function(response){
+                            if(response === 'not_logged_in'){
+                                window.location.href = "login.html"; 
+                            }
+                            else {
+            
+            var condition = true; 
+            
+            var body = document.querySelector('body');
+            
+            if (condition) {
+                body.style.display = "block"; 
+            } else {
+                body.style.display = "none";
+            }
+            
+                            }
+                        }
+                    });
+                });
+            
+            document.addEventListener("DOMContentLoaded", function() {
+            
+            fetchOptions();
+            
+            function fetchOptions() {
+                fetch('get_options.php')
+                    .then(response => response.json())
+                    .then(data => {
+            
+                        populateSelect('institution', data.institutions);
+                        populateSelect('program', data.programs);
+                    })
+                    .catch(error => console.error('Error fetching options:', error));
+            }
+            
+            function populateSelect(selectId, options) {
+                const select = document.getElementById(selectId);
+                if (!select) {
+                    console.error(`${selectId} select element not found`);
+                    return;
+                }
+                select.innerHTML = ''; 
+            
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = `Select ${selectId.charAt(0).toUpperCase() + selectId.slice(1)}`;
+                select.appendChild(defaultOption);
+            
+                options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    select.appendChild(optionElement);
+                });
+            
+                const othersOption = document.createElement('option');
+                othersOption.value = 'Others';
+                othersOption.textContent = 'Others';
+                select.appendChild(othersOption);
+            }
+            
+            document.getElementById('institution').addEventListener('change', function() {
+                const institutionInput = document.getElementById('institutionInput');
+                if (!institutionInput) {
+                    console.error('Institution input element not found');
+                    return;
+                }
+                if (this.value === 'Others') {
+                    institutionInput.style.display = '';
+                } else {
+                    institutionInput.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('program').addEventListener('change', function() {
+                const programInput = document.getElementById('programInput');
+                if (!programInput) {
+                    console.error('Program input element not found');
+                    return;
+                }
+                if (this.value === 'Others') {
+                    programInput.style.display = '';
+                } else {
+                    programInput.style.display = 'none';
+                }
+            });
+            
+            const addToProfileButton = document.querySelector('#popup-box3 .popup__button');
+            
+            addToProfileButton.addEventListener('click', function() {
+            
+            const sgpa = document.querySelector('#popup-box .popup__title').textContent.replace('SGPA: ', '');
+            
+            const institutionSelect = document.querySelector('#institution');
+            
+            const institution = institutionSelect.value === 'Others' ? document.querySelector('#institutionInput').value : institutionSelect.value;
+            
+            const programSelect = document.querySelector('#program');
+            
+            const program = programSelect.value === 'Others' ? document.querySelector('#programInput').value : programSelect.value;
+            
+            const semester = document.querySelector('input[name="semester[]"]').value;
+            
+            const sgpaData = {
+                sgpa: sgpa,
+                institution: institution,
+                program: program,
+                semester: semester
+            };
+            
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'save_sgpa.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+            
+                    const response = xhr.responseText;
+                    if (response === 'success') {
+                      cancelAll();
+                        createToast('success', 'SGPA data saved successfully!');
+                    } else {
+                        createToast('error', response);
+                    }
+                } else {
+            
+                    createToast('error', 'Error occurred while saving SGPA data.');
+                }
+            };
+            xhr.send(JSON.stringify(sgpaData));
+            });
+            
+            });
+            
+            const saveButton = document.querySelector('#popup-box2 .saveBtn');
+            saveButton.addEventListener('click', function() {
+            
+            saveGrades();
+            
+            closePopUpBox2();
+            });
+            
+            function saveGrades() {
+            
+            const newGradeInputs = document.querySelectorAll('#popup-box2 input[name="grade[]"]');
+            const newPointInputs = document.querySelectorAll('#popup-box2 input[name="point[]"]');
+            
+            const sgpaGradeSelect = document.getElementById('sgpaGradeSelect');
+            const existingOptions = sgpaGradeSelect.querySelectorAll('option:not(:first-child)');
+            existingOptions.forEach(option => option.remove());
+            
+            newGradeInputs.forEach((gradeInput, index) => {
+                const grade = gradeInput.value;
+                const point = newPointInputs[index].value;
+            
+                if (grade && point) {
+            
+                    const newOption = document.createElement('option');
+                    newOption.value = point;
+                    newOption.textContent = grade;
+                    sgpaGradeSelect.appendChild(newOption);
+                }
+            });
+            
+            updateExistingRows();
+            }
+            
+            function updateExistingRows() {
+            
+            const courseRows = document.querySelectorAll('.courseRow');
+            
+            const sgpaGradeSelect = document.getElementById('sgpaGradeSelect');
+            const gradeOptions = sgpaGradeSelect.querySelectorAll('option');
+            
+            courseRows.forEach(courseRow => {
+            
+                const gradeSelect = courseRow.querySelector('select[name="grade[]"]');
+            
+                const existingOptions = gradeSelect.querySelectorAll('option');
+                existingOptions.forEach(option => option.remove());
+            
+                gradeOptions.forEach(option => {
+                    const newOption = document.createElement('option');
+                    newOption.value = option.value;
+                    newOption.textContent = option.textContent;
+                    gradeSelect.appendChild(newOption);
+                });
+            });
+            }
+            
+              function openPopUpBox2() {
+            
+                document.getElementById('popup-box2').classList.add('show-popup');
+              }
+            
+              function closePopUpBox2() {
+            const popupBox = document.getElementById('popup-box2');
+            popupBox.classList.remove('show-popup');
+            }
+            
+            function addGradeRow() {
+            
+            const newGradeRow = document.createElement('div');
+            newGradeRow.classList.add('gradeRow');
+            
+            const gradeInput = document.createElement('input');
+            gradeInput.type = 'text';
+            gradeInput.name = 'grade[]';
+            gradeInput.placeholder = 'Grade';
+            gradeInput.required = true;
+            
+            const pointInput = document.createElement('input');
+            pointInput.type = 'text';
+            pointInput.name = 'point[]';
+            pointInput.placeholder = 'Grade Point';
+            pointInput.required = true;
+            
+            const deleteButton = document.createElement('i');
+            deleteButton.classList.add('bx', 'bx-trash', 'delete-grade');
+            deleteButton.title = 'Delete';
+            deleteButton.addEventListener('click', function() {
+                const gradeRow = deleteButton.closest('.gradeRow');
+                gradeRow.remove(); 
+            });
+            
+            newGradeRow.appendChild(gradeInput);
+            newGradeRow.appendChild(pointInput);
+            newGradeRow.appendChild(deleteButton);
+            
+            const buttonsContainer = document.querySelector('.popup__content .buttons-container');
+            buttonsContainer.parentNode.insertBefore(newGradeRow, buttonsContainer);
+            }
+            
+            const addGradeButton = document.querySelector('.add-g');
+            addGradeButton.addEventListener('click', addGradeRow);
+            
+            document.querySelectorAll('.delete-grade').forEach(button => {
+            button.addEventListener('click', function() {
+                const gradeRow = button.closest('.gradeRow');
+                gradeRow.remove(); 
+            });
+            });
+         </script>
+      </div>
+      <script>
+         function toggleOptions(icon) {
+         
+             const optionsContainer = icon.parentElement.querySelector('.options-container');
+             if (optionsContainer.style.display === "none") {
+                 optionsContainer.style.display = "block"; 
+             } else {
+                 optionsContainer.style.display = "none"; 
+             }
+         }
+         
+         function duplicateAndHide(button) {
+         
+             const courseRow = button.closest('.courseRow');
+             const clonedCourseRow = courseRow.cloneNode(true); 
+             courseRow.parentElement.insertBefore(clonedCourseRow, courseRow.nextSibling); 
+             const allOptionsContainers = document.querySelectorAll('.options-container'); 
+             allOptionsContainers.forEach(container => {
+                 container.style.display = "none"; 
+             });
+         }
+         
+         function deleteCourse(button) {
+         
+             const courseRow = button.closest('.courseRow');
+             courseRow.remove(); 
+         }
+         
+         function addCourse() {
+         const courseInputs = document.getElementById('courseInputs');
+         const newCourseRow = document.createElement('div');
+         newCourseRow.classList.add('courseRow');
+         
+         const userGrades = getUserGrades();
+         
+         const selectOptions = generateSelectOptions(userGrades);
+         
+         newCourseRow.innerHTML = `
+         <input type="text" name="course_code[]" placeholder="Course Code" required>
+         <input type="text" name="course_name[]" placeholder="Course Name" required>
+         <input type="number" name="credit[]" placeholder="Credit" required>
+         <select id="sgpaGradeSelect" name="grade[]" required>
+             ${selectOptions}
+         </select>
+         <span class="icon-wrapper">
+             <i class="fas fa-ellipsis-v" onclick="toggleOptions(this)"></i>
+             <div class="options-container">
+                 <button onclick="duplicateAndHide(this)">Duplicate</button>
+                 <button onclick="deleteCourse(this)">Delete</button>
+             </div>
+         </span>
+         `;
+         courseInputs.appendChild(newCourseRow);
+         }
+         
+         function getUserGrades() {
+         const userGradeInputs = document.querySelectorAll('#popup-box2 input[name="grade[]"]');
+         const userPointInputs = document.querySelectorAll('#popup-box2 input[name="point[]"]');
+         const userGrades = [];
+         
+         userGradeInputs.forEach((gradeInput, index) => {
+         const grade = gradeInput.value;
+         const point = userPointInputs[index].value;
+         if (grade && point) {
+             userGrades.push({ grade, point });
+         }
+         });
+         
+         return userGrades;
+         }
+         
+         function generateSelectOptions(userGrades) {
+         let options = '<option value="">Select Grade</option>';
+         userGrades.forEach(grade => {
+         options += `<option value="${grade.point}">${grade.grade}</option>`;
+         });
+         return options;
+         }
+         
+         function closeSgpaResultBox() {
+         const clickedContainer = this.closest('.popup__box');
+         clickedContainer.classList.remove('show-popup');
+         }
+         
+         const closeButtons = document.querySelectorAll('.close-popup');
+         
+         closeButtons.forEach(button => {
+         button.addEventListener('click', closeSgpaResultBox);
+         });
+         
+         function cancelAll() {
+         const cancelButtons = document.querySelectorAll('.close-popup');
+         cancelButtons.forEach(button => {
+         button.click(); 
+         });
+         }
+         
+         function calculateSGPA() {
+         const courseRows = document.querySelectorAll('.courseRow');
+         let totalCreditPoints = 0;
+         let totalCredits = 0;
+         
+         courseRows.forEach(courseRow => {
+         const grade = courseRow.querySelector('select[name="grade[]"]').value;
+         const credit = parseFloat(courseRow.querySelector('input[name="credit[]"]').value);
+         
+         if (grade && credit) {
+             totalCreditPoints += parseFloat(grade) * credit;
+             totalCredits += credit;
+         }
+         });
+         
+         if (totalCredits === 0) {
+         alert("Please fill in all course information.");
+         return;
+         }
+         
+         const sgpa = totalCreditPoints / totalCredits;
+         const percentage = sgpa * 9.5;
+         
+         const sgpaTitleElement = document.querySelector('.popup__title');
+         const percentageDescriptionElement = document.querySelector('.popup__description');
+         
+         sgpaTitleElement.textContent = "SGPA: " + sgpa.toFixed(2);
+         percentageDescriptionElement.textContent = "Percent Average: " + percentage.toFixed(2) + "%";
+         
+         const sgpaContainer = document.getElementById('popup-box');
+         sgpaContainer.classList.add('show-popup');
+         }
+         
+         const navBar = document.querySelector("nav"),
+         menuBtns = document.querySelectorAll(".menu-icon"),
+         overlay = document.querySelector(".overlay"),
+         navLinks = document.querySelectorAll(".nav-link");
+         
+         menuBtns.forEach((menuBtn) => {
+         menuBtn.addEventListener("click", () => {
+         navBar.classList.toggle("open");
+         });
+         });
+         
+         overlay.addEventListener("click", () => {
+         navBar.classList.remove("open");
+         });
+         
+         navLinks.forEach((link) => {
+         link.addEventListener("click", () => {
+         navBar.classList.remove("open");
+         });
+         });
+         
+         const addToProfileButton = document.querySelector('#popup-box .popup__button');
+         
+         addToProfileButton.addEventListener('click', function() {
+         
+         const popupBox2 = document.getElementById('popup-box3');
+         popupBox2.classList.add('show-popup');
+         });
+         
+         function createToast(type, message) {
+                 var toastContainer = document.querySelector('.toast-container');
+                 var toast = document.createElement("div");
+                 toast.classList.add("toast", type);
+                 toast.innerHTML = '<span>' + message + '</span>' +
+                                   '<i class="fas fa-times-circle close-icon"></i>';
+                 toastContainer.appendChild(toast);
+                 toast.querySelector('.close-icon').addEventListener('click', function(){
+                     toast.remove();
+                     if (type === 'success') {
+                         window.location.href = "sgpa_calculator.html"; 
+                     }
+                 });
+                 setTimeout(function(){
+                     toast.remove();
+                     if (type === 'success') {
+                         window.location.href = "sgpa_calculator.html"; 
+                     }
+                 }, 5000); 
+             }
+         
+      </script>
+   </body>
+</html>

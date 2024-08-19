@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SGPA CALCULATOR</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Boxicons CSS -->
+  <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+  <nav>
+    <div class="logo">
+      <i class="bx bx-menu menu-icon"></i>
+      <span class="logo-name">GPA PRO</span>
+    </div>
+
+    <div class="sidebar">
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name">GPA PRO</span>
+      </div>
+
+      <div class="sidebar-content">
+        <ul class="lists">
+          <li class="list">
+            <a href="dashboard.html" class="nav-link">
+              <i class="bx bx-home-alt icon"></i>
+              <span class="link">Dashboard</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="sgpa_calculator.html" class="nav-link ">
+              <i class="bx bx-calculator icon"></i>
+              <span class="link">SGPA Calculator</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="cgpa_calculator.html" class="nav-link">
+              <i class="bx bx-calculator icon"></i>
+              <span class="link">CGPA Calculator</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#" class="nav-link active-link">
+              <i class="bx bx-user icon"></i>
+              <span class="link">Profile</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="bottom-content">
+          <li class="list">
+            <a href="logout.php" class="nav-link">
+              <i class="bx bx-log-out icon"></i>
+              <span class="link">Logout</span>
+            </a>
+          </li>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="overlay"></section>
+
+  <div class="content">
+    <!-- Your content goes here -->
+    
+    <div class="toast-container"></div>
+    
+    
+    <div class="profile-settings">
+      <div class="profile-column">
+    <h2>Name</h2>
+    <p class="description">Update your full name here.</p>
+    <input type="text" placeholder="Enter new full name" class="profile-input" id="fullnameInput">
+    <button class="profile-button" id="updateNameButton" onclick="updateName()" disabled>Update</button>
+</div>
+
+      <div class="profile-column">
+        <h2>Username</h2>
+        <p class="description">Update your username here.</p>
+        <input type="text" placeholder="Enter new username" class="profile-input" id="usernameInput">
+        <button class="profile-button" id="updateUsernameButton" disabled onclick="updateUsername()">Update</button>
+      </div>
+
+      <div class="profile-column">
+        <h2>Update Password</h2>
+        <p class="description">Change your password here.</p>
+        <input type="password" placeholder="Enter current password" class="profile-input" id="currentPasswordInput">
+        <input type="password" placeholder="Enter new password" class="profile-input" id="newPasswordInput">
+        <button class="profile-button" id="updatePasswordButton" disabled onclick="updatePassword()">Update</button>
+      </div>
+
+      <div class="profile-column">
+        <h2>Email</h2>
+        <p class="description">Update your email address here.</p>
+        <input type="email" placeholder="Enter new email address" class="profile-input" id="emailInput">
+        <button class="profile-button" id="updateEmailButton" disabled onclick="updateEmail()">Update</button>
+      </div>
+
+<div class="profile-column">
+    <h2>Delete Account</h2>
+    <p class="description">Delete your account permanently.</p>
+    <button class="delete-button" onclick="showDeleteConfirmation()">Delete Account</button>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmationModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeDeleteConfirmation()">&times;</span>
+        <p>Are you sure you want to delete your account?</p>
+        <div class="button-container">
+            <button onclick="deleteAccount()">Yes, delete</button>
+            <button onclick="closeDeleteConfirmation()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+  
+   $(document).ready(function(){
+            // Check if the user is logged in
+            $.ajax({
+                type: "GET",
+                url: "check_login.php",
+                success: function(response){
+                    if(response === 'not_logged_in'){
+                        window.location.href = "login.html"; // Redirect to login page
+                    }
+                    else {
+                      // Your condition to make the body visible
+    var condition = true; // Change this to your specific condition
+
+    // Get the body element
+    var body = document.querySelector('body');
+
+    // Check the condition
+    if (condition) {
+        body.style.display = "block"; // Or any other display style you want
+    } else {
+        body.style.display = "none";
+    }
+                      
+                    }
+                }
+            });
+        });
+        
+        
+        document.addEventListener("DOMContentLoaded", function() {
+    // Fetch user details using AJAX when the page loads
+    fetchProfileDetails();
+
+    // Store original values of input fields
+    var originalValues = {};
+
+    // Function to fetch user details
+    function fetchProfileDetails() {
+        // Fetch user details from server using AJAX
+        fetch('get_user_details.php')
+            .then(response => response.json())
+            .then(data => {
+                // Populate input fields with fetched data and store original values
+                document.getElementById('fullnameInput').value = data.fullname;
+                originalValues.fullname = data.fullname;
+                document.getElementById('usernameInput').value = data.username;
+                originalValues.username = data.username;
+                document.getElementById('emailInput').value = data.email;
+                originalValues.email = data.email;
+
+                // Enable or disable buttons based on initial values
+                enableDisableButtons();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+// Function to enable or disable buttons based on input changes
+function enableDisableButtons() {
+    var fullnameInput = document.getElementById('fullnameInput');
+    var usernameInput = document.getElementById('usernameInput');
+    var emailInput = document.getElementById('emailInput');
+    var currentPasswordInput = document.getElementById('currentPasswordInput');
+    var newPasswordInput = document.getElementById('newPasswordInput');
+    var updateNameButton = document.getElementById('updateNameButton');
+    var updateUsernameButton = document.getElementById('updateUsernameButton');
+    var updateEmailButton = document.getElementById('updateEmailButton');
+    var updatePasswordButton = document.getElementById('updatePasswordButton');
+
+    // Enable or disable update name button based on input change
+    fullnameInput.addEventListener('input', function() {
+        updateNameButton.disabled = fullnameInput.value === originalValues.fullname;
+    });
+
+    // Enable or disable update username button based on input change
+    usernameInput.addEventListener('input', function() {
+        updateUsernameButton.disabled = usernameInput.value === originalValues.username;
+    });
+
+    // Enable or disable update email button based on input change
+    emailInput.addEventListener('input', function() {
+        updateEmailButton.disabled = emailInput.value === originalValues.email;
+    });
+
+    // Enable or disable update password button based on input change
+    currentPasswordInput.addEventListener('input', function() {
+        updatePasswordButton.disabled = currentPasswordInput.value === '' || newPasswordInput.value === '' ;
+    });
+
+    newPasswordInput.addEventListener('input', function() {
+        updatePasswordButton.disabled = currentPasswordInput.value === '' || newPasswordInput.value === '';
+    });
+}
+
+  
+});
+
+  // Function to update name
+    function updateName() {
+        var fullname = document.getElementById('fullnameInput').value;
+
+        // Send fullname to update_name.php via AJAX
+        $.ajax({
+            type: 'POST',
+            url: 'update_name.php',
+            data: {
+                fullname: fullname
+            }, // Send fullname as data
+            success: function(response) {
+                if(response === 'success'){
+                            createToast('success', 'Name updated successfully');
+                        } else {
+                            createToast('error', response);
+                        }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+   
+   
+    function updateUsername() {
+    var username = document.getElementById('usernameInput').value;
+    
+    // Send username to update_username.php via AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'update_username.php',
+        data: { username: username }, // Send username as data
+        success: function(response) {
+            if(response === 'success'){
+                            createToast('success', 'Username updated successfully');
+                        } else {
+                            createToast('error', response);
+                        }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+    
+  
+function updateEmail() {
+    var email = document.getElementById('emailInput').value;
+
+    // Send email to update_email.php via AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'update_email.php',
+        data: { email: email }, // Send email as data
+        success: function(response) {
+            if(response === 'success'){
+                            createToast('success', 'Email updated successfully');
+                        } else {
+                            createToast('error', response);
+                        }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+    
+  
+  function updatePassword() {
+    var currentPassword = document.getElementById('currentPasswordInput').value;
+    var newPassword = document.getElementById('newPasswordInput').value;
+
+    // Send current and new password to update_password.php via AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'update_password.php',
+        data: { currentPassword: currentPassword, newPassword: newPassword }, // Send passwords as data
+        success: function(response) {
+            if(response === 'success'){
+                            createToast('success', 'Password updated successfully');
+                        } else {
+                            createToast('error', response);
+                        }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+    
+    
+
+  // Function to show delete confirmation modal
+function showDeleteConfirmation() {
+    var modal = document.getElementById('deleteConfirmationModal');
+    modal.style.display = "block";
+}
+
+// Function to close delete confirmation modal
+function closeDeleteConfirmation() {
+    var modal = document.getElementById('deleteConfirmationModal');
+    modal.style.display = "none";
+}
+
+// Function to delete account
+function deleteAccount() {
+    // Send AJAX request to delete_account.php
+    $.ajax({
+        type: 'POST',
+        url: 'delete_account.php',
+        success: function(response) {
+            // Redirect to logout page or display a message
+            window.location.href = "logout.php";
+        },
+        error: function(xhr, status, error) {
+            // Display error message
+            createToast('error', 'Error deleting account');
+            console.error('Error:', error);
+        }
+    });
+}
+    
+    
+        
+        
+    const navBar = document.querySelector("nav"),
+    menuBtns = document.querySelectorAll(".menu-icon"),
+    overlay = document.querySelector(".overlay"),
+    navLinks = document.querySelectorAll(".nav-link");
+
+menuBtns.forEach((menuBtn) => {
+    menuBtn.addEventListener("click", () => {
+        navBar.classList.toggle("open");
+    });
+});
+
+overlay.addEventListener("click", () => {
+    navBar.classList.remove("open");
+});
+
+navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+        navBar.classList.remove("open");
+    });
+});
+    
+    
+    
+    function createToast(type, message) {
+              var toastContainer = $('.toast-container');
+              var toast = $('<div class="toast ' + type + '"><span>' + message + '</span><i class="fas fa-times close-icon"></i></div>');
+              toastContainer.append(toast);
+              toast.find('.close-icon').click(function(){
+                  toast.remove();
+                  if (type === 'success' ) {
+                        location.reload();
+                    }
+              });
+              setTimeout(function(){
+                  toast.remove();
+                  if (type === 'success' ) {
+                        location.reload();
+                    }
+              }, 5000); // Remove toast after 5 seconds
+          }
+    
+    
+  </script>
+</body>
+
+</html>

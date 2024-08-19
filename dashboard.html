@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CGPA CALCULATOR</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+  
+
+  <!-- Boxicons CSS -->
+  <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+  <nav>
+    <div class="logo">
+      <i class="bx bx-menu menu-icon"></i>
+      <span class="logo-name">GPA PRO</span>
+    </div>
+
+    <div class="sidebar">
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name">GPA PRO</span>
+      </div>
+
+      <div class="sidebar-content">
+        <ul class="lists">
+          <li class="list">
+            <a href="#" class="nav-link active-link">
+              <i class="bx bx-home-alt icon"></i>
+              <span class="link">Dashboard</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="sgpa_calculator.html" class="nav-link">
+              <i class="bx bx-calculator icon"></i>
+              <span class="link">SGPA Calculator</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="cgpa_calculator.html" class="nav-link">
+              <i class="bx bx-calculator icon"></i>
+              <span class="link">CGPA Calculator</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="profile.html" class="nav-link">
+              <i class="bx bx-user icon"></i>
+              <span class="link">Profile</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="bottom-content">
+          <li class="list">
+            <a href="logout.php" class="nav-link">
+              <i class="bx bx-log-out icon"></i>
+              <span class="link">Logout</span>
+            </a>
+          </li>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="overlay"></section>
+       <div class="toast-container"></div> <!-- Toast container -->
+  <div class="content">
+   
+   <div class="dashboard"></div>
+  </div>
+    
+    <script>
+      
+      
+      $(document).ready(function(){
+            // Check if the user is logged in
+            $.ajax({
+                type: "GET",
+                url: "check_login.php",
+                success: function(response){
+                    if(response === 'not_logged_in'){
+                        window.location.href = "login.html"; // Redirect to login page
+                    }
+                    else {
+                      // Your condition to make the body visible
+    var condition = true; // Change this to your specific condition
+
+    // Get the body element
+    var body = document.querySelector('body');
+
+    // Check the condition
+    if (condition) {
+        body.style.display = "block"; // Or any other display style you want
+    } else {
+        body.style.display = "none";
+    }
+                      
+                    }
+                }
+            });
+        });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Function to fetch SGPA data from the server
+    function fetchSGPAData() {
+        // Make an AJAX request to fetch SGPA data
+        fetch('fetch_sgpa_data.php')
+            .then(response => response.json())
+            .then(data => {
+                // Call function to generate HTML content with the received data
+                generateSGPAHTML(data);
+            })
+            .catch(error => console.error('Error fetching SGPA data:', error));
+    }
+
+    // Function to generate HTML content with SGPA data
+// Function to generate HTML content with SGPA data
+function generateSGPAHTML(data) {
+    const dashboard = document.querySelector('.dashboard');
+    dashboard.innerHTML = '';
+
+    if (Object.keys(data).length === 0) {
+        const noDetailsParagraph = document.createElement('p');
+        noDetailsParagraph.textContent = 'No SGPA details saved.';
+        noDetailsParagraph.classList.add('no-details');
+        dashboard.appendChild(noDetailsParagraph);
+    } else {
+        for (const institution in data) {
+            if (data.hasOwnProperty(institution)) {
+                const programs = data[institution];
+
+                // Create a div for the institution
+                const institutionDiv = document.createElement('div');
+                institutionDiv.classList.add('institution');
+
+                // Create institution name header
+                const institutionNameHeader = document.createElement('h2');
+                institutionNameHeader.classList.add('institution-name');
+                institutionNameHeader.textContent = `Institution: ${institution}`;
+                institutionDiv.appendChild(institutionNameHeader);
+
+                // Create options container for institution
+                createOptionsContainer(institutionDiv);
+
+                // Iterate over each program in the institution
+                for (const program in programs) {
+                    if (programs.hasOwnProperty(program)) {
+                        const semesters = programs[program];
+
+                        // Create a div for the program
+                        const programDiv = document.createElement('div');
+                        programDiv.classList.add('program');
+
+                        // Create program name header
+                        const programNameHeader = document.createElement('h3');
+                        programNameHeader.classList.add('program-name');
+                        programNameHeader.textContent = `Program: ${program}`;
+                        programDiv.appendChild(programNameHeader);
+
+                        // Create CGPA value paragraph
+                        const cgpaValueParagraph = document.createElement('p');
+                        cgpaValueParagraph.classList.add('cgpa-value');
+                        const cgpa = calculateCGPA(semesters); // Function to calculate CGPA
+                        cgpaValueParagraph.textContent = `CGPA: ${cgpa}`;
+                        programDiv.appendChild(cgpaValueParagraph);
+
+                        // Create options container for program
+                        createOptionsContainer(programDiv);
+
+                        // Iterate over each semester in the program
+                        semesters.forEach(semester => {
+                            // Create a div for the semester
+                            const semesterDiv = document.createElement('div');
+                            semesterDiv.classList.add('sgpa');
+
+                            // Create semester title header
+                            const semesterTitleHeader = document.createElement('h4');
+                            semesterTitleHeader.classList.add('sgpa-title');
+                            semesterTitleHeader.textContent = `Semester ${semester.semester}`;
+                            semesterDiv.appendChild(semesterTitleHeader);
+
+                            // Create SGPA value paragraph
+                            const sgpaValueParagraph = document.createElement('p');
+                            sgpaValueParagraph.classList.add('sgpa-value');
+                            sgpaValueParagraph.textContent = `SGPA: ${semester.sgpa}`;
+                            semesterDiv.appendChild(sgpaValueParagraph);
+
+                            // Create options container for sgpa
+                            createOptionsContainer(semesterDiv, 'semester', program, semester.semester);
+
+                            // Append the semester div to the program div
+                            programDiv.appendChild(semesterDiv);
+                        });
+
+                        // Append the program div to the institution div
+                        institutionDiv.appendChild(programDiv);
+                    }
+                }
+
+                // Append the institution div to the dashboard container
+                dashboard.appendChild(institutionDiv);
+            }
+        }
+    }
+}
+
+function calculateCGPA(semesters) {
+    // Assuming semesters is an array of objects with 'sgpa' property
+    let totalSGPA = 0;
+    semesters.forEach(semester => {
+        totalSGPA += parseFloat(semester.sgpa);
+    });
+    const cgpa = totalSGPA / semesters.length; // Assuming equal weightage for each semester
+    return cgpa.toFixed(2); // Round to 2 decimal places
+}
+
+
+function cancelAllEditing() {
+    const cancelButtons = document.querySelectorAll('.cancel-button');
+    cancelButtons.forEach(button => {
+        button.click(); // Simulate click on cancel button
+    });
+}
+function editInstitutionDetails(button) {
+   
+    cancelAllEditing();
+  
+    const institutionDiv = button.closest('.institution');
+    const institutionNameHeader = institutionDiv.querySelector('.institution-name');
+
+    // Replace institution name with input field
+    const institutionNameInput = document.createElement('input');
+    institutionNameInput.setAttribute('type', 'text');
+    institutionNameInput.classList.add('institution-name-input');
+    institutionNameInput.classList.add('input-field');
+    institutionNameInput.value = institutionNameHeader.textContent.replace('Institution: ', '');
+    institutionNameHeader.parentNode.replaceChild(institutionNameInput, institutionNameHeader);
+
+    // Add label for institution name input
+    const institutionNameLabel = document.createElement('h2');
+    institutionNameLabel.textContent = 'Institution:';
+    institutionNameLabel.classList.add('institution-name', 'label');
+    institutionDiv.insertBefore(institutionNameLabel, institutionNameInput);
+
+    // Create cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.classList.add('cancel-button');
+    cancelButton.addEventListener('click', function() {
+        // Cancel editing and restore original details
+        institutionNameInput.parentNode.replaceChild(institutionNameHeader, institutionNameInput);
+        institutionNameLabel.parentNode.removeChild(institutionNameLabel);
+        button.style.display = 'inline-block'; // Restore the edit button
+        
+    
+    cancelButton.style.display = 'none';
+    saveButton.style.display = 'none';
+});
+    
+    institutionDiv.insertBefore(cancelButton, institutionNameInput.nextSibling);
+
+    // Create save button
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.classList.add('save-button');
+    saveButton.addEventListener('click', function() {
+        const oldName = institutionNameHeader.textContent.replace('Institution: ', '');
+        const newName = institutionNameInput.value.trim();
+        saveInstitutionDetails(oldName, newName); // Call the save function with old and new names
+    });
+    institutionDiv.insertBefore(saveButton, institutionNameInput.nextSibling);
+
+    // Remove the edit button
+    button.style.display = 'none';
+}
+
+function saveInstitutionDetails(oldName, newName) {
+    // Send AJAX request to PHP script
+    $.ajax({
+        type: "POST",
+        url: "save_institution_details.php",
+        data: { old_name: oldName, new_name: newName },
+        success: function(response) {
+            if(response === 'success') {
+                createToast('success', 'Institution' ,'details saved successfully!');
+                
+            } else {
+                createToast('error', response);
+            }
+        }
+    });
+}
+
+// Similarly, update editProgramDetails and saveProgramDetails functions
+
+function editProgramDetails(button) {
+    cancelAllEditing();
+    const programDiv = button.closest('.program');
+    const programNameHeader = programDiv.querySelector('.program-name');
+
+    // Replace program name with input field
+    const programNameInput = document.createElement('input');
+    programNameInput.setAttribute('type', 'text');
+    programNameInput.classList.add('program-name-input');
+    programNameInput.classList.add('input-field');
+    programNameInput.value = programNameHeader.textContent.replace('Program: ', '');
+    programNameHeader.parentNode.replaceChild(programNameInput, programNameHeader);
+
+    // Add label for program name input
+    const programNameLabel = document.createElement('h3');
+    programNameLabel.textContent = 'Program:';
+    programNameLabel.classList.add('program-name', 'label');
+    programDiv.insertBefore(programNameLabel, programNameInput);
+
+    // Create cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.classList.add('cancel-button');
+    cancelButton.addEventListener('click', function() {
+        // Restore original details and hide buttons
+        programNameInput.parentNode.replaceChild(programNameHeader, programNameInput);
+        programNameLabel.parentNode.removeChild(programNameLabel);
+        cancelButton.style.display = 'none'; // Hide the cancel button
+        saveButton.style.display = 'none'; // Hide the save button
+        button.style.display = 'inline-block'; // Restore the edit button
+        const lineBreak = programDiv.querySelector('br');
+        if (lineBreak) {
+            lineBreak.parentNode.removeChild(lineBreak);
+        }
+    });
+    programDiv.insertBefore(cancelButton, programNameInput.nextSibling);
+
+    // Create save button
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.classList.add('save-button');
+    saveButton.addEventListener('click', function() {
+        const oldName = programNameHeader.textContent.replace('Program: ', '');
+        const newName = programNameInput.value.trim();
+        const institutionName = programDiv.closest('.institution').querySelector('.institution-name').textContent.replace('Institution: ', '');
+        saveProgramDetails(oldName, newName, institutionName); // Call the save function with old and new names, and institution name
+    });
+    programDiv.insertBefore(saveButton, programNameInput.nextSibling);
+
+    // Remove the edit button
+    button.style.display = 'none';
+}
+
+function saveProgramDetails(oldName, newName, institutionName) {
+    // Send AJAX request to PHP script
+    $.ajax({
+        type: "POST",
+        url: "save_program_details.php",
+        data: { old_name: oldName, new_name: newName, institution_name: institutionName },
+        success: function(response) {
+            if(response === 'success') {
+                createToast('success', 'Program', 'details saved successfully!');
+                
+            } else {
+                createToast('error', response);
+            }
+        }
+    });
+}
+
+// Similarly, update editSemesterDetails and saveSemesterDetails functions
+function editSemesterDetails(button, semesterNumber) {
+    cancelAllEditing();
+  
+    const semesterDiv = button.closest('.sgpa');
+    const sgpaValueParagraph = semesterDiv.querySelector('.sgpa-value');
+
+    // Replace SGPA value with input field
+    const sgpaValueInput = document.createElement('input');
+    sgpaValueInput.setAttribute('type', 'text');
+    sgpaValueInput.classList.add('sgpa-value-input');
+    sgpaValueInput.classList.add('input-field');
+    sgpaValueInput.value = sgpaValueParagraph.textContent.replace('SGPA: ', '');
+    sgpaValueParagraph.parentNode.replaceChild(sgpaValueInput, sgpaValueParagraph);
+
+    // Add label for SGPA value input
+    const sgpaValueLabel = document.createElement('p');
+    sgpaValueLabel.textContent = 'SGPA:';
+    sgpaValueLabel.classList.add('sgpa-value', 'label');
+    semesterDiv.insertBefore(sgpaValueLabel, sgpaValueInput);
+    semesterDiv.insertBefore(document.createElement('br'), sgpaValueInput.nextSibling); // Add line break
+
+    // Create cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.classList.add('cancel-button');
+    cancelButton.addEventListener('click', function() {
+        // Cancel editing and restore original details
+        sgpaValueInput.parentNode.replaceChild(sgpaValueParagraph, sgpaValueInput);
+        sgpaValueLabel.parentNode.removeChild(sgpaValueLabel);
+        cancelButton.style.display = 'none'; // Hide the cancel button
+        saveButton.style.display = 'none'; // Hide the save button
+        button.style.display = 'inline-block'; // Restore the edit button
+        const lineBreak = semesterDiv.querySelector('br');
+        if (lineBreak) {
+            lineBreak.parentNode.removeChild(lineBreak);
+        }
+    });
+    semesterDiv.insertBefore(cancelButton, sgpaValueInput.nextSibling);
+
+    // Create save button
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.classList.add('save-button');
+    saveButton.addEventListener('click', function() {
+        const newValue = sgpaValueInput.value.trim();
+        const programName = semesterDiv.closest('.program').querySelector('.program-name').textContent.replace('Program: ', '');
+        const institutionName = semesterDiv.closest('.institution').querySelector('.institution-name').textContent.replace('Institution: ', '');
+        saveSemesterDetails(newValue, semesterNumber, programName, institutionName); // Pass semester number to saveSemesterDetails function
+    });
+    semesterDiv.insertBefore(saveButton, sgpaValueInput.nextSibling);
+
+    // Remove the edit button
+    button.style.display = 'none';
+}
+
+function saveSemesterDetails(newValue, semester, programName, institutionName) {
+    // Send AJAX request to PHP script
+    $.ajax({
+        type: "POST",
+        url: "save_semester_details.php",
+        data: { new_sgpa: newValue, semester: semester, program_name: programName, institution_name: institutionName },
+        success: function(response) {
+            if(response === 'success') {
+                createToast('success', 'Semester','details saved successfully!');
+                
+            } else {
+                createToast('error', response);
+            }
+        }
+    });
+}
+
+
+function createOptionsContainer(parentElement, itemType, programName, semesterNumber) {
+    // Create a div for the options wrapper
+    const optionsWrapper = document.createElement('div');
+    optionsWrapper.classList.add('options-wrapper');
+
+    // Create the icon wrapper
+    const iconWrapper = document.createElement('span');
+    iconWrapper.classList.add('icon-wrapper');
+    iconWrapper.addEventListener('click', function() {
+        toggleOptions(this);
+    });
+
+    // Create the icon element
+    const icon = document.createElement('i');
+    icon.classList.add('fas', 'fa-ellipsis-v');
+
+    // Append the icon to the icon wrapper
+    iconWrapper.appendChild(icon);
+
+    // Create the options container
+    const optionsContainer = document.createElement('div');
+    optionsContainer.classList.add('options-container');
+
+    // Create the edit button for all section types
+    const editButton = document.createElement('button');
+    editButton.textContent = `Edit`;
+    
+    optionsContainer.appendChild(editButton);
+
+    
+    // Check if the parentElement has the class 'institution'
+if (parentElement.classList.contains('institution')) {
+    editButton.addEventListener('click', function() {
+        editInstitutionDetails(this);
+    });
+}else if (parentElement.classList.contains('program')) {
+    editButton.addEventListener('click', function() {
+        editProgramDetails(this);
+    });
+}
+    
+    // Check if the item type is 'semester'
+    if (itemType === 'semester') {
+        try {
+           
+          
+             
+            // Get the parent program element
+            const programDiv = parentElement.closest('.program');
+            // Create the delete button for the semester
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = `Delete`;
+            deleteButton.addEventListener('click', function() {
+                deleteItem(this, programName, semesterNumber);
+            });
+            optionsContainer.appendChild(deleteButton);
+            
+            editButton.addEventListener('click', function() {
+    editSemesterDetails(this, semesterNumber); // Pass semester number as argument
+});
+
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }  else {
+        
+        
+      
+        // Create the delete button for other item types
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+            deleteItem(this);
+        });
+        optionsContainer.appendChild(deleteButton);
+    }
+
+    // Append the options container to the icon wrapper
+    iconWrapper.appendChild(optionsContainer);
+
+    // Append the icon wrapper to the options wrapper
+    optionsWrapper.appendChild(iconWrapper);
+
+    // Append the options wrapper before the parent element's text content
+    parentElement.insertBefore(optionsWrapper, parentElement.firstChild);
+}
+
+// Function to handle item deletion
+function deleteItem(button, programName, semesterNumber) {
+     cancelAllEditing();
+    // Get the parent element of the item to be deleted
+    const itemDiv = button.closest('.institution, .program, .sgpa');
+
+    // Get the item type
+    const itemType = itemDiv.classList.contains('institution') ? 'institution' :
+                     itemDiv.classList.contains('program') ? 'program' :
+                     'semester';
+
+    // Get the item name
+    let itemName;
+    if (itemType === 'semester') {
+        itemName = `Semester ${semesterNumber} of program ${programName}`;
+    } else {
+        itemName = itemDiv.querySelector(`.${itemType}-name`).textContent.replace(`${itemType.charAt(0).toUpperCase() + itemType.slice(1)}: `, '');
+    }
+
+    // Get the institution name
+    const institutionName = itemDiv.closest('.institution').querySelector('.institution-name').textContent.replace('Institution: ', '');
+
+    // Display the appropriate confirmation message based on the item type
+    let confirmationMessage;
+    if (itemType === 'institution') {
+        confirmationMessage = `Are you sure you want to delete institution ${itemName}?`;
+    } else if (itemType === 'program') {
+        confirmationMessage = `Are you sure you want to delete program ${itemName} from institution ${institutionName}?`;
+    } else {
+        confirmationMessage = `Are you sure you want to delete ${itemName} from institution ${institutionName}?`;
+    }
+
+    // Confirm deletion with the user
+    if (confirm(confirmationMessage)) {
+        // Send AJAX request to delete the item
+        $.ajax({
+            type: "POST",
+            url: "delete_item.php",
+            data: { item_type: itemType, item_name: itemName, institution_name: institutionName }, // Send item type, name, and institution name in the request
+            
+            success: function(response) {
+            if(response === 'success') {
+                createToast('success',itemType,'data deleted successfully');
+                
+            } else {
+                createToast('error', response);
+            }
+        }
+        });
+    }
+    
+    
+}
+
+    // Fetch SGPA data when the DOM content is loaded
+    fetchSGPAData();
+});
+
+
+
+function toggleOptions(iconWrapper) {
+    // Toggle the visibility of the options container
+    const optionsContainer = iconWrapper.querySelector('.options-container');
+    optionsContainer.classList.toggle('show');
+}
+
+
+
+
+
+
+const navBar = document.querySelector("nav"),
+    menuBtns = document.querySelectorAll(".menu-icon"),
+    overlay = document.querySelector(".overlay"),
+    navLinks = document.querySelectorAll(".nav-link");
+
+menuBtns.forEach((menuBtn) => {
+    menuBtn.addEventListener("click", () => {
+        navBar.classList.toggle("open");
+    });
+});
+
+overlay.addEventListener("click", () => {
+    navBar.classList.remove("open");
+});
+
+navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+        navBar.classList.remove("open");
+    });
+});
+
+
+
+
+
+function createToast(type,item,message) {
+                var toastContainer = document.querySelector('.toast-container');
+                var toast = document.createElement("div");
+                toast.classList.add("toast", type);
+                toast.innerHTML = '<span>'+ item +' '+ message + '</span>' +
+                                  '<i class="fas fa-times-circle close-icon"></i>';
+                toastContainer.appendChild(toast);
+                toast.querySelector('.close-icon').addEventListener('click', function(){
+                    toast.remove();
+                    if (type === 'success') {
+                        location.reload(); // Redirect only on successful login
+                    }
+                });
+                setTimeout(function(){
+                    toast.remove();
+                    if (type === 'success') {
+                        location.reload();
+                    }
+                }, 2000); // Remove toast after 5 seconds
+            }
+            
+</script>
+
+
+<style>
+      body {
+        display: none;
+      }
+     .dashboard {
+    font-family: 'Poppins', sans-serif;
+    padding: 20px;
+}
+
+.institution {
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 20px;
+    display: block;
+    justify-content: space-between;
+  
+}
+
+.institution-name {
+    color: #333;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.program {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.program-name {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.sgpa {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+.sgpa-title {
+    color: #888;
+    font-size: 14px;
+    margin: 0;
+}
+
+.sgpa-value {
+    color: #333;
+    font-size: 12px;
+    margin: 0;
+}
+
+.no-details {
+    color: #888;
+    font-size: 18px;
+    text-align: center;
+}
+
+.options-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.icon-wrapper {
+    width: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.icon-wrapper:hover .options-container {
+    display: block;
+}
+
+.options-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1;
+}
+
+.options-container button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.options-container button:hover {
+    background-color: #f0f0f0;
+}
+
+
+
+
+/* Add these CSS styles to your stylesheet */
+
+.label {
+    display: inline-block;
+    width: 100px; /* Adjust as needed */
+    margin-right: 10px; /* Adjust spacing between label and input field */
+}
+
+.input-field {
+    width: calc(100% - 110px); /* Adjust as needed */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.cancel-button,
+.save-button {
+    margin-top: 5px; /* Add some space above the buttons */
+    margin-right: 10px; /* Add some space between the buttons */
+    padding: 5px 10px; /* Add padding to the buttons */
+    background-color: #f0f0f0; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    border-radius: 3px; /* Border radius */
+    cursor: pointer; /* Cursor style */
+}
+
+.cancel-button:hover,
+.save-button:hover {
+    background-color: #e0e0e0; /* Background color on hover */
+}
+
+.cancel-button {
+    color: #cc0000; /* Text color for cancel button */
+}
+
+.save-button {
+    color: #007bff; /* Text color for save button */
+}
+
+</style>
+
+</body>
+
+</html>
